@@ -8,8 +8,7 @@ import Necesito from './pages/Necesito'
 import Fotos from './pages/Fotos'
 import './App.css'
 
-const NAV_ICONS = { repuestos: '⚙', gastos: '$', checklist: '✓', necesito: '↗', fotos: '◉' }
-const NAV_KEYS  = ['repuestos', 'gastos', 'checklist', 'necesito', 'fotos']
+const NAV_KEYS = ['repuestos', 'gastos', 'checklist', 'necesito', 'fotos']
 
 function SyncBadge() {
   const { status } = useSync()
@@ -51,19 +50,18 @@ export default function App() {
             <span className="wordmark-title">Land Rover Series III</span>
             <span className="wordmark-sub">{t.wordmark.sub}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <nav className="nav">
-              {NAV_KEYS.map(key => (
-                <NavLink key={key} to={`/${key}`} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                  <span className="nav-icon">{NAV_ICONS[key]}</span>
-                  <span className="nav-label">{t.nav[key]}</span>
-                </NavLink>
-              ))}
-            </nav>
+          <div className="top-bar-controls">
             <LangToggle />
             <SyncBadge />
           </div>
         </div>
+        <nav className="nav">
+          {NAV_KEYS.map(key => (
+            <NavLink key={key} to={`/${key}`} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+              {t.nav[key]}
+            </NavLink>
+          ))}
+        </nav>
       </header>
 
       <main className="main">

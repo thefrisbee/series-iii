@@ -1,64 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,600&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:          #EEECEA;
-  --surface:     #F8F6F3;
-  --surface-alt: #E5E3DF;
-  --border:      #D0CCC4;
-  --text:        #1C201A;
-  --muted:       #6B6D65;
+  --bg:          #ECE7DB;
+  --surface:     #F4EFE5;
+  --surface-alt: #E2DBD0;
+  --border:      #C6BDB0;
+  --text:        #1A1814;
+  --muted:       #7A6E62;
   --accent:      #2A5430;
   --accent-dim:  #1E3E24;
 
-  --stripe-pending: #C0BCB4;
-  --stripe-ordered: #C49030;
+  --stripe-pending: #B4AC9E;
+  --stripe-ordered: #B48828;
   --stripe-done:    #3A7448;
 
-  --badge-p-bg:  #ECEAE7; --badge-p-fg: #888880;
-  --badge-o-bg:  #F8F0DC; --badge-o-fg: #8A6820;
-  --badge-d-bg:  #E2EEE5; --badge-d-fg: #2A5430;
+  --badge-p-bg:  #E6E0D6; --badge-p-fg: #857A6E;
+  --badge-o-bg:  #F2EAD0; --badge-o-fg: #85621A;
+  --badge-d-bg:  #DAE6DC; --badge-d-fg: #2A5430;
 
-  --nav-h: 52px;
-  --mono: 'SF Mono', 'Monaco', 'Menlo', monospace;
+  --nav-h: 44px;
+  --mono:    'SF Mono', 'Monaco', 'Menlo', monospace;
+  --display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg:          #141812;
-    --surface:     #1C211A;
-    --surface-alt: #232820;
-    --border:      #2E342C;
-    --text:        #E4E2DA;
-    --muted:       #888A80;
+    --bg:          #141210;
+    --surface:     #1E1B17;
+    --surface-alt: #28241E;
+    --border:      #363028;
+    --text:        #EAE2D6;
+    --muted:       #7A7068;
     --accent:      #4A8A5A;
     --accent-dim:  #3A6A48;
 
-    --stripe-pending: #404440;
-    --stripe-ordered: #C49030;
+    --stripe-pending: #3C3830;
+    --stripe-ordered: #B48828;
     --stripe-done:    #4A8A5A;
 
-    --badge-p-bg:  #252820; --badge-p-fg: #6A6C64;
-    --badge-o-bg:  #2A2010; --badge-o-fg: #C49030;
-    --badge-d-bg:  #182218; --badge-d-fg: #4A8A5A;
+    --badge-p-bg:  #262218; --badge-p-fg: #6A6258;
+    --badge-o-bg:  #28200E; --badge-o-fg: #B48828;
+    --badge-d-bg:  #182018; --badge-d-fg: #4A8A5A;
   }
 }
 
 :root[data-theme="light"] {
-  --bg: #EEECEA; --surface: #F8F6F3; --surface-alt: #E5E3DF; --border: #D0CCC4;
-  --text: #1C201A; --muted: #6B6D65; --accent: #2A5430; --accent-dim: #1E3E24;
-  --stripe-pending: #C0BCB4; --stripe-ordered: #C49030; --stripe-done: #3A7448;
-  --badge-p-bg: #ECEAE7; --badge-p-fg: #888880;
-  --badge-o-bg: #F8F0DC; --badge-o-fg: #8A6820;
-  --badge-d-bg: #E2EEE5; --badge-d-fg: #2A5430;
+  --bg: #ECE7DB; --surface: #F4EFE5; --surface-alt: #E2DBD0; --border: #C6BDB0;
+  --text: #1A1814; --muted: #7A6E62; --accent: #2A5430; --accent-dim: #1E3E24;
+  --stripe-pending: #B4AC9E; --stripe-ordered: #B48828; --stripe-done: #3A7448;
+  --badge-p-bg: #E6E0D6; --badge-p-fg: #857A6E;
+  --badge-o-bg: #F2EAD0; --badge-o-fg: #85621A;
+  --badge-d-bg: #DAE6DC; --badge-d-fg: #2A5430;
 }
 
 :root[data-theme="dark"] {
-  --bg: #141812; --surface: #1C211A; --surface-alt: #232820; --border: #2E342C;
-  --text: #E4E2DA; --muted: #888A80; --accent: #4A8A5A; --accent-dim: #3A6A48;
-  --stripe-pending: #404440; --stripe-ordered: #C49030; --stripe-done: #4A8A5A;
-  --badge-p-bg: #252820; --badge-p-fg: #6A6C64;
-  --badge-o-bg: #2A2010; --badge-o-fg: #C49030;
-  --badge-d-bg: #182218; --badge-d-fg: #4A8A5A;
+  --bg: #141210; --surface: #1E1B17; --surface-alt: #28241E; --border: #363028;
+  --text: #EAE2D6; --muted: #7A7068; --accent: #4A8A5A; --accent-dim: #3A6A48;
+  --stripe-pending: #3C3830; --stripe-ordered: #B48828; --stripe-done: #4A8A5A;
+  --badge-p-bg: #262218; --badge-p-fg: #6A6258;
+  --badge-o-bg: #28200E; --badge-o-fg: #B48828;
+  --badge-d-bg: #182018; --badge-d-fg: #4A8A5A;
 }
 
 html { scroll-behavior: smooth; }
@@ -80,7 +83,7 @@ input, textarea, select {
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: 0;
   outline: none;
   transition: border-color 0.15s;
 }
@@ -90,4 +93,4 @@ input::placeholder, textarea::placeholder { color: var(--muted); }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
