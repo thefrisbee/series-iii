@@ -60,13 +60,17 @@ export default function Checklist() {
       <div className="page-header">
         <h1 className="page-title">{T.title}</h1>
         <p className="page-sub">{T.sub}</p>
-        <div className="progress-row">
+        <div className="page-hero-img">
+          <img src={`${import.meta.env.BASE_URL}photos/img_4577.jpg`} alt="Land Rover Series III" />
+        </div>
+        <div className="progress-row" style={{ marginTop: 14 }}>
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }} />
           </div>
           <span className="progress-label">{T.done(done, total)}</span>
         </div>
       </div>
+
 
       <form className="form-card" onSubmit={add} style={{ padding: '12px 16px' }}>
         <div className="form-row" style={{ marginBottom: 0 }}>

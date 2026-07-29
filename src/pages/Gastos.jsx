@@ -38,7 +38,7 @@ export default function Gastos() {
         <div className="rep-header-grid">
           <div>
             <h1 className="page-title">{T.title}</h1>
-            <p className="page-sub">{T.totalSpent}: <strong className="mono">{fmt(totalAll)}</strong></p>
+            <p className="page-sub">{T.expenses(gastos.length)}</p>
           </div>
           {totalAll > 0 && (
             <div className="cost-hero">
@@ -46,6 +46,9 @@ export default function Gastos() {
               <div className="cost-hero-amount">{fmt(totalAll)}</div>
             </div>
           )}
+        </div>
+        <div className="page-hero-img">
+          <img src={`${import.meta.env.BASE_URL}photos/img_4576.jpg`} alt="Land Rover Series III" />
         </div>
       </div>
 

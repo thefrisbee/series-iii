@@ -76,6 +76,9 @@ export default function Fotos() {
       <div className="page-header">
         <h1 className="page-title">{T.title}</h1>
         <p className="page-sub">{T.sub(allFotos.length, seeded.length, fotos.length)}</p>
+        <div className="page-hero-img">
+          <img src={`${BASE}photos/img_2376.jpg`} alt="Land Rover Series III" />
+        </div>
       </div>
 
       <form className="form-card" onSubmit={submit}>
@@ -92,7 +95,6 @@ export default function Fotos() {
               }}
             >
               {T.select}
-              Seleccionar foto
             </button>
           )
         }

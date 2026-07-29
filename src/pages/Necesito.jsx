@@ -39,6 +39,9 @@ export default function Necesito() {
       <div className="page-header">
         <h1 className="page-title">{T.title}</h1>
         <p className="page-sub">{T.sub}</p>
+        <div className="page-hero-img">
+          <img src={`${import.meta.env.BASE_URL}photos/img_4569.jpg`} alt="Land Rover Series III" />
+        </div>
       </div>
 
       <form className="form-card" onSubmit={add}>
