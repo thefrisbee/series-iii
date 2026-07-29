@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useSyncedData } from '../sync/useSyncedData'
 import { REPUESTOS } from '../data/repuestos'
 
 const STATUSES = ['pendiente', 'ordenado', 'instalado']
@@ -16,7 +16,7 @@ function copyPart(p) {
 const INIT = REPUESTOS.map(p => ({ id: p.id, status: 'pendiente', nota: '' }))
 
 export default function Repuestos() {
-  const [saved, setSaved] = useLocalStorage('lr-repuestos-v1', INIT)
+  const [saved, setSaved] = useSyncedData('repuestos', INIT)
   const [filter, setFilter]   = useState('todos')
   const [expanded, setExpanded] = useState(null)
   const [copied, setCopied]   = useState(null)

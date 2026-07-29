@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useSyncedData } from '../sync/useSyncedData'
 
 export default function Necesito() {
-  const [items, setItems]   = useLocalStorage('lr-necesito-v1', [])
+  const [items, setItems]   = useSyncedData('necesito', [])
   const [form, setForm]     = useState({ descripcion: '', referencia: '', prioridad: 'normal', nota: '' })
   const [filter, setFilter] = useState('todos')
   const [expanded, setExpanded] = useState(null)

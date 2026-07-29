@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useSyncedData } from '../sync/useSyncedData'
 
 const SEED = [
   'Limpiar y desgrasar el chasis',
@@ -25,7 +25,7 @@ const SEED = [
 ]
 
 export default function Checklist() {
-  const [items, setItems] = useLocalStorage('lr-checklist-v1',
+  const [items, setItems] = useSyncedData('checklist',
     SEED.map((text, i) => ({ id: i, text, checked: false }))
   )
   const [newText, setNewText] = useState('')

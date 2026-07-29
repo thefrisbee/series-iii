@@ -1,5 +1,8 @@
 import { useState, useRef } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
+import { SEEDED_PHOTOS } from '../data/photos'
+
+const BASE = import.meta.env.BASE_URL
 
 const MAX_DIM = 1400
 const QUALITY = 0.82
@@ -55,17 +58,21 @@ export default function Fotos() {
     setLightbox(null)
   }
 
-  const allTags = [...new Set(fotos.flatMap(f => f.tags))].sort()
+  // merge seeded (static) + user-uploaded photos, newest first
+  const seeded = SEEDED_PHOTOS.map(p => ({ ...p, src: `${BASE}photos/${p.file}`, seeded: true }))
+  const allFotos = [...fotos, ...seeded].sort((a, b) => b.fecha.localeCompare(a.fecha))
+
+  const allTags = [...new Set(allFotos.flatMap(f => f.tags))].sort()
 
   const visible = tagFilter
-    ? fotos.filter(f => f.tags.includes(tagFilter))
-    : fotos
+    ? allFotos.filter(f => f.tags.includes(tagFilter))
+    : allFotos
 
   return (
     <>
       <div className="page-header">
         <h1 className="page-title">Fotos del avance</h1>
-        <p className="page-sub">{fotos.length} {fotos.length === 1 ? 'foto' : 'fotos'} · guardadas en este dispositivo</p>
+        <p className="page-sub">{allFotos.length} {allFotos.length === 1 ? 'foto' : 'fotos'} · {seeded.length} en repo · {fotos.length} subidas</p>
       </div>
 
       <form className="form-card" onSubmit={submit}>
@@ -141,7 +148,7 @@ export default function Fotos() {
                 />
                 <div style={{ padding: '7px 10px' }}>
                   {foto.titulo && <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{foto.titulo}</div>}
-                  <div style={{ fontSize: 10, color: 'var(--muted)' }}>{foto.fecha}</div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)' }}>{foto.fecha}{foto.seeded && ' · repo'}</div>
                   {foto.tags.length > 0 && (
                     <div style={{ marginTop: 4, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                       {foto.tags.map(t => (
@@ -173,7 +180,7 @@ export default function Fotos() {
                 <div style={{ fontSize: 12, color: 'var(--muted)' }}>{lightbox.fecha}{lightbox.tags.length > 0 && ` · ${lightbox.tags.join(', ')}`}</div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn-ghost" onClick={() => del(lightbox.id)}>Eliminar</button>
+                {!lightbox.seeded && <button className="btn-ghost" onClick={() => del(lightbox.id)}>Eliminar</button>}
                 <button className="btn-ghost" onClick={() => setLightbox(null)}>Cerrar</button>
               </div>
             </div>

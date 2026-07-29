@@ -332,9 +332,46 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ── SYNC BADGE ── */
+.sync-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 6px;
+  border-left: 1px solid var(--border);
+  margin-left: 4px;
+}
+
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sync-dot.synced  { background: var(--stripe-done); }
+.sync-dot.loading { background: var(--stripe-ordered); animation: pulse 1s infinite; }
+.sync-dot.syncing { background: var(--stripe-ordered); animation: pulse 0.6s infinite; }
+.sync-dot.dirty   { background: var(--stripe-ordered); }
+.sync-dot.error   { background: #C0392B; }
+.sync-dot.offline { background: var(--muted); }
+
+.sync-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
 @media (max-width: 520px) {
   .wordmark-sub { display: none; }
   .nav-label    { display: none; }
   .nav-link     { padding: 8px 10px; }
   .nav-icon     { font-size: 16px; }
+  .sync-label   { display: none; }
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useSyncedData } from '../sync/useSyncedData'
 
 const CATS = ['Motor', 'Frenos', 'Dirección', 'Suspensión', 'Hidráulica', 'Carrocería', 'Herramientas', 'Otros']
 
@@ -8,7 +8,7 @@ const today = () => new Date().toISOString().slice(0, 10)
 const fmt = (n) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n)
 
 export default function Gastos() {
-  const [gastos, setGastos] = useLocalStorage('lr-gastos-v1', [])
+  const [gastos, setGastos] = useSyncedData('gastos', [])
   const [form, setForm] = useState({ fecha: today(), concepto: '', monto: '', categoria: 'Otros', nota: '' })
   const [catFilter, setCatFilter] = useState('Todas')
 
