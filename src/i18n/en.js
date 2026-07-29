@@ -7,7 +7,7 @@ const en = {
   repuestos: {
     title: 'Parts',
     sub: 'Current inventory · tap status to cycle',
-    installed: (n, t) => `${n} / ${t} installed`,
+    progress: (n, t) => `${n} / ${t} installed`,
     all: 'All', pending: 'Pending', ordered: 'Ordered', installed: 'Installed',
     notePlaceholder: 'Note…',
     empty: 'No parts in this category.',

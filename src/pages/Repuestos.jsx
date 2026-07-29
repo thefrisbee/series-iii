@@ -86,7 +86,7 @@ export default function Repuestos() {
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }} />
           </div>
-          <span className="progress-label">{T.installed(counts.instalado, state.length)}</span>
+          <span className="progress-label">{T.progress(counts.instalado, state.length)}</span>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ const es = {
   repuestos: {
     title: 'Repuestos',
     sub: 'Inventario actual · tocá el estado para avanzar',
-    installed: (n, t) => `${n} / ${t} instalados`,
+    progress: (n, t) => `${n} / ${t} instalados`,
     all: 'Todos', pending: 'Pendiente', ordered: 'Ordenado', installed: 'Instalado',
     notePlaceholder: 'Nota…',
     empty: 'No hay repuestos en esta categoría.',
