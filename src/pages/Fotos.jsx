@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useLanguage } from '../i18n/LanguageContext'
 import { SEEDED_PHOTOS } from '../data/photos'
 
 const BASE = import.meta.env.BASE_URL
@@ -29,6 +30,8 @@ function compressImage(file) {
 const today = () => new Date().toISOString().slice(0, 10)
 
 export default function Fotos() {
+  const { t } = useLanguage()
+  const T = t.fotos
   const [fotos, setFotos] = useLocalStorage('lr-fotos-v1', [])
   const [form, setForm]   = useState({ fecha: today(), titulo: '', tags: '' })
   const [preview, setPreview] = useState(null)
@@ -47,7 +50,7 @@ export default function Fotos() {
   function submit(e) {
     e.preventDefault()
     if (!preview) return
-    const tags = form.tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
+    const tags = form.tags.split(',').map(tag => tag.trim().toLowerCase()).filter(Boolean)
     setFotos(prev => [{ id: Date.now(), src: preview, fecha: form.fecha, titulo: form.titulo, tags }, ...prev])
     setPreview(null)
     setForm(f => ({ ...f, titulo: '', tags: '' }))
@@ -71,8 +74,8 @@ export default function Fotos() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Fotos del avance</h1>
-        <p className="page-sub">{allFotos.length} {allFotos.length === 1 ? 'foto' : 'fotos'} · {seeded.length} en repo · {fotos.length} subidas</p>
+        <h1 className="page-title">{T.title}</h1>
+        <p className="page-sub">{T.sub(allFotos.length, seeded.length, fotos.length)}</p>
       </div>
 
       <form className="form-card" onSubmit={submit}>
@@ -88,6 +91,7 @@ export default function Fotos() {
                 borderRadius: 2, color: 'var(--muted)', fontSize: 13, cursor: 'pointer',
               }}
             >
+              {T.select}
               Seleccionar foto
             </button>
           )
@@ -96,20 +100,20 @@ export default function Fotos() {
 
         <div className="form-row">
           <div className="field" style={{ flexBasis: 140 }}>
-            <label>Fecha</label>
+            <label>{T.dateLabel}</label>
             <input type="date" value={form.fecha} onChange={e => setForm(f => ({ ...f, fecha: e.target.value }))} />
           </div>
           <div className="field" style={{ flex: 2 }}>
-            <label>Título</label>
-            <input type="text" placeholder="Ej: Desmontaje de eje trasero" value={form.titulo} onChange={e => setForm(f => ({ ...f, titulo: e.target.value }))} />
+            <label>{T.titleLabel}</label>
+            <input type="text" placeholder={T.titlePlaceholder} value={form.titulo} onChange={e => setForm(f => ({ ...f, titulo: e.target.value }))} />
           </div>
         </div>
         <div className="form-row">
           <div className="field" style={{ flex: 1 }}>
-            <label>Tags (separados por coma)</label>
-            <input type="text" placeholder="Ej: ejes, frenos, motor" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} />
+            <label>{T.tagsLabel}</label>
+            <input type="text" placeholder={T.tagsPlaceholder} value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} />
           </div>
-          <button type="submit" className="btn-primary" disabled={!preview}>Guardar foto</button>
+          <button type="submit" className="btn-primary" disabled={!preview}>{T.save}</button>
         </div>
       </form>
 
@@ -119,20 +123,20 @@ export default function Fotos() {
             className={`btn-ghost${tagFilter === '' ? ' active' : ''}`}
             style={tagFilter === '' ? { borderColor: 'var(--accent)', color: 'var(--accent)' } : {}}
             onClick={() => setTagFilter('')}
-          >Todas</button>
-          {allTags.map(t => (
+          >{T.all}</button>
+          {allTags.map(tag => (
             <button
-              key={t}
-              className={`btn-ghost${tagFilter === t ? ' active' : ''}`}
-              style={tagFilter === t ? { borderColor: 'var(--accent)', color: 'var(--accent)' } : {}}
-              onClick={() => setTagFilter(t === tagFilter ? '' : t)}
-            >{t}</button>
+              key={tag}
+              className={`btn-ghost${tagFilter === tag ? ' active' : ''}`}
+              style={tagFilter === tag ? { borderColor: 'var(--accent)', color: 'var(--accent)' } : {}}
+              onClick={() => setTagFilter(tag === tagFilter ? '' : tag)}
+            >{tag}</button>
           ))}
         </div>
       )}
 
       {visible.length === 0
-        ? <div className="empty">{fotos.length === 0 ? 'Todavía no hay fotos.' : 'No hay fotos con ese tag.'}</div>
+        ? <div className="empty">{fotos.length === 0 ? T.emptyNone : T.emptyTag}</div>
         : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
             {visible.map(foto => (
@@ -148,11 +152,11 @@ export default function Fotos() {
                 />
                 <div style={{ padding: '7px 10px' }}>
                   {foto.titulo && <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{foto.titulo}</div>}
-                  <div style={{ fontSize: 10, color: 'var(--muted)' }}>{foto.fecha}{foto.seeded && ' · repo'}</div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)' }}>{foto.fecha}{foto.seeded && ` · ${T.repo}`}</div>
                   {foto.tags.length > 0 && (
                     <div style={{ marginTop: 4, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                      {foto.tags.map(t => (
-                        <span key={t} style={{ fontSize: 9, padding: '1px 6px', background: 'var(--badge-d-bg)', color: 'var(--badge-d-fg)', borderRadius: 1, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t}</span>
+                      {foto.tags.map(tag => (
+                        <span key={tag} style={{ fontSize: 9, padding: '1px 6px', background: 'var(--badge-d-bg)', color: 'var(--badge-d-fg)', borderRadius: 1, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{tag}</span>
                       ))}
                     </div>
                   )}
@@ -180,8 +184,8 @@ export default function Fotos() {
                 <div style={{ fontSize: 12, color: 'var(--muted)' }}>{lightbox.fecha}{lightbox.tags.length > 0 && ` · ${lightbox.tags.join(', ')}`}</div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                {!lightbox.seeded && <button className="btn-ghost" onClick={() => del(lightbox.id)}>Eliminar</button>}
-                <button className="btn-ghost" onClick={() => setLightbox(null)}>Cerrar</button>
+                {!lightbox.seeded && <button className="btn-ghost" onClick={() => del(lightbox.id)}>{T.delete}</button>}
+                <button className="btn-ghost" onClick={() => setLightbox(null)}>{T.close}</button>
               </div>
             </div>
           </div>

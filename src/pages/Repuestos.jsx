@@ -1,36 +1,47 @@
 import { useState } from 'react'
 import { useSyncedData } from '../sync/useSyncedData'
+import { useLanguage } from '../i18n/LanguageContext'
 import { REPUESTOS } from '../data/repuestos'
 
 const STATUSES = ['pendiente', 'ordenado', 'instalado']
-const LABELS   = { pendiente: 'Pendiente', ordenado: 'Ordenado', instalado: 'Instalado' }
 
+// Always copies in English for searching on parts websites
 function copyPart(p) {
   const lines = [p.descripcion]
-  if (p.codigo !== '—') lines.push(`Código: ${p.codigo}`)
-  if (p.marca !== '—') lines.push(`Marca: ${p.marca}`)
-  if (p.cantidad > 1) lines.push(`Cantidad: ${p.cantidad}`)
+  if (p.codigo !== '—') lines.push(p.codigo)
+  if (p.marca !== '—') lines.push(p.marca)
+  lines.push('Land Rover Series III')
+  if (p.cantidad > 1) lines.push(`Qty: ${p.cantidad}`)
   navigator.clipboard.writeText(lines.join('\n'))
 }
 
-const INIT = REPUESTOS.map(p => ({ id: p.id, status: 'pendiente', nota: '' }))
+const fmt = (n) =>
+  n > 0
+    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
+    : '—'
+
+const INIT = REPUESTOS.map(p => ({ id: p.id, status: 'pendiente', nota: '', precio: 0 }))
 
 export default function Repuestos() {
-  const [saved, setSaved] = useSyncedData('repuestos', INIT)
+  const { t } = useLanguage()
+  const T = t.repuestos
+  const [saved, setSaved]     = useSyncedData('repuestos', INIT)
   const [filter, setFilter]   = useState('todos')
   const [expanded, setExpanded] = useState(null)
   const [copied, setCopied]   = useState(null)
 
   const state = REPUESTOS.map(p => {
-    const s = saved.find(x => x.id === p.id) || { status: 'pendiente', nota: '' }
-    return { ...p, status: s.status, nota: s.nota }
+    const s = saved.find(x => x.id === p.id) || { status: 'pendiente', nota: '', precio: 0 }
+    return { ...p, status: s.status, nota: s.nota || '', precio: s.precio || 0 }
   })
 
+  const totalCost = state.reduce((sum, p) => sum + (p.precio || 0), 0)
+
   const counts = {
-    todos: state.length,
-    pendiente:  state.filter(p => p.status === 'pendiente').length,
-    ordenado:   state.filter(p => p.status === 'ordenado').length,
-    instalado:  state.filter(p => p.status === 'instalado').length,
+    todos:     state.length,
+    pendiente: state.filter(p => p.status === 'pendiente').length,
+    ordenado:  state.filter(p => p.status === 'ordenado').length,
+    instalado: state.filter(p => p.status === 'instalado').length,
   }
 
   const visible = filter === 'todos' ? state : state.filter(p => p.status === filter)
@@ -42,12 +53,8 @@ export default function Repuestos() {
     ))
   }
 
-  function setNota(id, nota) {
-    setSaved(prev => prev.map(p => p.id === id ? { ...p, nota } : p))
-  }
-
-  function toggleExpand(id) {
-    setExpanded(e => e === id ? null : id)
+  function update(id, fields) {
+    setSaved(prev => prev.map(p => p.id === id ? { ...p, ...fields } : p))
   }
 
   function handleCopy(e, p) {
@@ -57,21 +64,35 @@ export default function Repuestos() {
     setTimeout(() => setCopied(c => c === p.id ? null : c), 1500)
   }
 
+  const statusLabel = { pendiente: T.pending, ordenado: T.ordered, instalado: T.installed }
+
   return (
     <>
+      {/* ── HEADER ── */}
       <div className="page-header">
-        <h1 className="page-title">Repuestos</h1>
-        <p className="page-sub">Inventario actual · tocá el estado para avanzar</p>
-        <div className="progress-row">
+        <div className="rep-header-grid">
+          <div>
+            <h1 className="page-title">{T.title}</h1>
+            <p className="page-sub">{T.sub}</p>
+          </div>
+          {totalCost > 0 && (
+            <div className="cost-hero">
+              <div className="cost-hero-label">{t.gastos.totalSpent}</div>
+              <div className="cost-hero-amount">{fmt(totalCost)}</div>
+            </div>
+          )}
+        </div>
+        <div className="progress-row" style={{ marginTop: 14 }}>
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }} />
           </div>
-          <span className="progress-label">{counts.instalado} / {state.length} instalados</span>
+          <span className="progress-label">{T.installed(counts.instalado, state.length)}</span>
         </div>
       </div>
 
-      <div className="stats-row">
-        {[['todos','n','Todos'], ['pendiente','p','Pendiente'], ['ordenado','o','Ordenado'], ['instalado','d','Instalado']].map(([f, dot, label]) => (
+      {/* ── STATUS PILLS ── */}
+      <div className="status-pills-row">
+        {[['todos','n', T.all], ['pendiente','p', T.pending], ['ordenado','o', T.ordered], ['instalado','d', T.installed]].map(([f, dot, label]) => (
           <button key={f} className={`stat-pill${filter === f ? ' active' : ''}`} onClick={() => setFilter(f)}>
             <span className={`stat-dot ${dot}`} />
             {label}
@@ -80,46 +101,63 @@ export default function Repuestos() {
         ))}
       </div>
 
+      {/* ── LIST ── */}
       <div className="list-box">
         {visible.length === 0
-          ? <div className="empty">No hay repuestos en esta categoría.</div>
+          ? <div className="empty">{T.empty}</div>
           : visible.map(p => (
             <div key={p.id} className={`list-row s-${p.status}${expanded === p.id ? ' expanded' : ''}`}>
               <div
-                className="row-main"
-                style={{ gridTemplateColumns: '108px 1fr 32px 30px 88px' }}
-                onClick={e => { if (!e.target.closest('button')) toggleExpand(p.id) }}
+                className="row-main rep-row-grid"
+                onClick={e => { if (!e.target.closest('button') && !e.target.closest('input')) setExpanded(ex => ex === p.id ? null : p.id) }}
               >
-                <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.codigo}</span>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 13 }}>{p.descripcion}</div>
-                  {p.marca !== '—' && <div style={{ fontSize: 11, color: 'var(--muted)' }}>{p.marca}</div>}
+                <span className="mono part-code">{p.codigo}</span>
+                <div className="part-info">
+                  <div className="part-desc">{p.descripcion}</div>
+                  {p.marca !== '—' && <div className="part-brand">{p.marca}</div>}
                 </div>
-                <span className="mono" style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'right' }}>×{p.cantidad}</span>
-                <button
-                  title="Copiar info"
-                  onClick={e => handleCopy(e, p)}
-                  style={{
-                    background: 'none', border: 'none', padding: '4px 2px',
-                    fontSize: 13, color: copied === p.id ? 'var(--stripe-done)' : 'var(--muted)',
-                    cursor: 'pointer', transition: 'color 0.15s',
-                  }}
-                >
+                <span className="mono part-qty">×{p.cantidad}</span>
+                <span className="mono part-price" style={{ color: p.precio > 0 ? 'var(--text)' : 'var(--muted)', fontSize: 11 }}>
+                  {p.precio > 0 ? fmt(p.precio) : '—'}
+                </span>
+                <button title="Copy for search" onClick={e => handleCopy(e, p)} className="copy-btn">
                   {copied === p.id ? '✓' : '⎘'}
                 </button>
                 <button className={`status-btn ${p.status}`} onClick={() => cycleStatus(p.id)}>
-                  {LABELS[p.status]}
+                  {statusLabel[p.status]}
                 </button>
               </div>
-              <div className="row-expand">
-                <textarea
-                  className="note-input"
-                  rows={2}
-                  placeholder="Nota…"
-                  value={p.nota}
-                  onChange={e => setNota(p.id, e.target.value)}
-                  onClick={e => e.stopPropagation()}
-                />
+              <div className="row-expand rep-expand">
+                <div className="rep-expand-inner">
+                  <div className="field" style={{ flex: 1 }}>
+                    <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
+                      {t.gastos.amount}
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      value={p.precio || ''}
+                      onChange={e => update(p.id, { precio: parseFloat(e.target.value) || 0 })}
+                      onClick={e => e.stopPropagation()}
+                      style={{ padding: '6px 10px', width: '100%', fontVariantNumeric: 'tabular-nums' }}
+                    />
+                  </div>
+                  <div className="field" style={{ flex: 3 }}>
+                    <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
+                      {t.repuestos.notePlaceholder}
+                    </label>
+                    <textarea
+                      className="note-input"
+                      rows={1}
+                      placeholder={T.notePlaceholder}
+                      value={p.nota}
+                      onChange={e => update(p.id, { nota: e.target.value })}
+                      onClick={e => e.stopPropagation()}
+                      style={{ minHeight: 36, resize: 'none' }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           ))

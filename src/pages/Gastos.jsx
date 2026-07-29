@@ -1,16 +1,21 @@
 import { useState } from 'react'
 import { useSyncedData } from '../sync/useSyncedData'
+import { useLanguage } from '../i18n/LanguageContext'
 
-const CATS = ['Motor', 'Frenos', 'Dirección', 'Suspensión', 'Hidráulica', 'Carrocería', 'Herramientas', 'Otros']
+// Internal category keys — language-independent storage
+const CAT_KEYS = ['engine', 'brakes', 'steering', 'suspension', 'hydraulics', 'body', 'tools', 'other']
 
 const today = () => new Date().toISOString().slice(0, 10)
 
-const fmt = (n) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n)
+const fmt = (n) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
 
 export default function Gastos() {
+  const { t } = useLanguage()
+  const T = t.gastos
   const [gastos, setGastos] = useSyncedData('gastos', [])
-  const [form, setForm] = useState({ fecha: today(), concepto: '', monto: '', categoria: 'Otros', nota: '' })
-  const [catFilter, setCatFilter] = useState('Todas')
+  const [form, setForm] = useState({ fecha: today(), concepto: '', monto: '', categoria: 'other', nota: '' })
+  const [catFilter, setCatFilter] = useState('all')
 
   function submit(e) {
     e.preventDefault()
@@ -23,86 +28,88 @@ export default function Gastos() {
     setGastos(prev => prev.filter(g => g.id !== id))
   }
 
-  const visible = catFilter === 'Todas' ? gastos : gastos.filter(g => g.categoria === catFilter)
-  const total = visible.reduce((s, g) => s + g.monto, 0)
+  const visible = catFilter === 'all' ? gastos : gastos.filter(g => g.categoria === catFilter)
+  const total    = visible.reduce((s, g) => s + g.monto, 0)
   const totalAll = gastos.reduce((s, g) => s + g.monto, 0)
-
-  const field = (key, props) => (
-    <div className="field">
-      <label>{props.label}</label>
-      {props.type === 'select'
-        ? <select value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}>
-            {props.options.map(o => <option key={o}>{o}</option>)}
-          </select>
-        : <input
-            type={props.type || 'text'}
-            placeholder={props.placeholder}
-            value={form[key]}
-            onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-          />
-      }
-    </div>
-  )
 
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Gastos</h1>
-        <p className="page-sub">
-          Total gastado: <strong className="mono">{fmt(totalAll)}</strong>
-        </p>
+        <div className="rep-header-grid">
+          <div>
+            <h1 className="page-title">{T.title}</h1>
+            <p className="page-sub">{T.totalSpent}: <strong className="mono">{fmt(totalAll)}</strong></p>
+          </div>
+          {totalAll > 0 && (
+            <div className="cost-hero">
+              <div className="cost-hero-label">{T.totalSpent}</div>
+              <div className="cost-hero-amount">{fmt(totalAll)}</div>
+            </div>
+          )}
+        </div>
       </div>
 
       <form className="form-card" onSubmit={submit}>
         <div className="form-row">
-          {field('fecha',     { label: 'Fecha', type: 'date' })}
-          {field('categoria', { label: 'Categoría', type: 'select', options: CATS })}
+          <div className="field">
+            <label>{T.date}</label>
+            <input type="date" value={form.fecha} onChange={e => setForm(f => ({ ...f, fecha: e.target.value }))} />
+          </div>
+          <div className="field">
+            <label>{T.category}</label>
+            <select value={form.categoria} onChange={e => setForm(f => ({ ...f, categoria: e.target.value }))}>
+              {CAT_KEYS.map(k => <option key={k} value={k}>{T.cats[k]}</option>)}
+            </select>
+          </div>
         </div>
         <div className="form-row">
-          {field('concepto', { label: 'Concepto', placeholder: 'Ej: Track Rod End RTC5867' })}
-          {field('monto',    { label: 'Monto (ARS)', type: 'number', placeholder: '0' })}
-          <button type="submit" className="btn-primary">Agregar</button>
+          <div className="field" style={{ flex: 2 }}>
+            <label>{T.description}</label>
+            <input type="text" placeholder="Ej: Track Rod End RTC5867" value={form.concepto} onChange={e => setForm(f => ({ ...f, concepto: e.target.value }))} />
+          </div>
+          <div className="field" style={{ flexBasis: 120 }}>
+            <label>{T.amount}</label>
+            <input type="number" min="0" step="0.01" placeholder="0" value={form.monto} onChange={e => setForm(f => ({ ...f, monto: e.target.value }))} />
+          </div>
+          <button type="submit" className="btn-primary">{T.add}</button>
         </div>
       </form>
 
-      {/* Category filter */}
       <div className="stats-row" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 6 }}>
-        {['Todas', ...CATS].map(c => (
+        {[['all', T.allCats], ...CAT_KEYS.map(k => [k, T.cats[k]])].map(([k, label]) => (
           <button
-            key={c}
-            className={`btn-ghost${catFilter === c ? ' active' : ''}`}
-            style={catFilter === c ? { borderColor: 'var(--accent)', color: 'var(--accent)' } : {}}
-            onClick={() => setCatFilter(c)}
+            key={k}
+            className="btn-ghost"
+            style={catFilter === k ? { borderColor: 'var(--accent)', color: 'var(--accent)' } : {}}
+            onClick={() => setCatFilter(k)}
           >
-            {c}
+            {label}
           </button>
         ))}
       </div>
 
       {visible.length > 0 && (
         <div style={{ marginBottom: 10, fontSize: 12, color: 'var(--muted)' }}>
-          {catFilter !== 'Todas' && <span>{catFilter}: <strong className="mono">{fmt(total)}</strong> · </span>}
-          <span>{visible.length} {visible.length === 1 ? 'gasto' : 'gastos'}</span>
+          {catFilter !== 'all' && <span>{T.cats[catFilter]}: <strong className="mono">{fmt(total)}</strong> · </span>}
+          <span>{T.expenses(visible.length)}</span>
         </div>
       )}
 
       <div className="list-box">
         {visible.length === 0
-          ? <div className="empty">No hay gastos registrados.</div>
+          ? <div className="empty">{T.empty}</div>
           : visible.map(g => (
             <div key={g.id} className="list-row" style={{ borderLeftColor: 'var(--stripe-done)' }}>
               <div className="row-main" style={{ gridTemplateColumns: '88px 1fr auto auto' }}>
                 <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{g.fecha}</span>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 500, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{g.concepto}</div>
-                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>{g.categoria}{g.nota && ` · ${g.nota}`}</div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+                    {T.cats[g.categoria] || g.categoria}{g.nota && ` · ${g.nota}`}
+                  </div>
                 </div>
                 <span className="mono" style={{ fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', paddingRight: 12 }}>{fmt(g.monto)}</span>
-                <button
-                  className="btn-ghost"
-                  style={{ fontSize: 11, padding: '3px 8px' }}
-                  onClick={() => del(g.id)}
-                >✕</button>
+                <button className="btn-ghost" style={{ fontSize: 11, padding: '3px 8px' }} onClick={() => del(g.id)}>✕</button>
               </div>
             </div>
           ))

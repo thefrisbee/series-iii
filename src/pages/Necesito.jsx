@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useSyncedData } from '../sync/useSyncedData'
+import { useLanguage } from '../i18n/LanguageContext'
 
 export default function Necesito() {
+  const { t } = useLanguage()
+  const T = t.necesito
   const [items, setItems]   = useSyncedData('necesito', [])
   const [form, setForm]     = useState({ descripcion: '', referencia: '', prioridad: 'normal', nota: '' })
   const [filter, setFilter] = useState('todos')
@@ -34,55 +37,38 @@ export default function Necesito() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Necesito conseguir</h1>
-        <p className="page-sub">Partes o materiales por buscar</p>
+        <h1 className="page-title">{T.title}</h1>
+        <p className="page-sub">{T.sub}</p>
       </div>
 
       <form className="form-card" onSubmit={add}>
         <div className="form-row">
           <div className="field" style={{ flex: 2 }}>
-            <label>Descripción</label>
-            <input
-              type="text"
-              placeholder="Ej: Junta de culata 2.25L"
-              value={form.descripcion}
-              onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))}
-            />
+            <label>{T.descLabel}</label>
+            <input type="text" placeholder={T.descPlaceholder} value={form.descripcion} onChange={e => setForm(f => ({ ...f, descripcion: e.target.value }))} />
           </div>
           <div className="field">
-            <label>Código / referencia</label>
-            <input
-              type="text"
-              placeholder="Ej: 538403"
-              value={form.referencia}
-              onChange={e => setForm(f => ({ ...f, referencia: e.target.value }))}
-            />
+            <label>{T.refLabel}</label>
+            <input type="text" placeholder={T.refPlaceholder} value={form.referencia} onChange={e => setForm(f => ({ ...f, referencia: e.target.value }))} />
           </div>
           <div className="field" style={{ flexBasis: 120 }}>
-            <label>Prioridad</label>
+            <label>{T.prioLabel}</label>
             <select value={form.prioridad} onChange={e => setForm(f => ({ ...f, prioridad: e.target.value }))}>
-              <option value="alta">Alta</option>
-              <option value="normal">Normal</option>
-              <option value="baja">Baja</option>
+              {['alta', 'normal', 'baja'].map(p => <option key={p} value={p}>{T.prios[p]}</option>)}
             </select>
           </div>
         </div>
         <div className="form-row">
           <div className="field" style={{ flex: 1 }}>
-            <label>Nota (opcional)</label>
-            <input
-              type="text"
-              placeholder="Dónde buscar, precio estimado, etc."
-              value={form.nota}
-              onChange={e => setForm(f => ({ ...f, nota: e.target.value }))}
-            />
+            <label>{T.noteLabel}</label>
+            <input type="text" placeholder={T.notePlaceholder} value={form.nota} onChange={e => setForm(f => ({ ...f, nota: e.target.value }))} />
           </div>
-          <button type="submit" className="btn-primary">Agregar</button>
+          <button type="submit" className="btn-primary">{T.add}</button>
         </div>
       </form>
 
       <div className="stats-row">
-        {[['todos','n','Todos'], ['necesito','p','Necesito'], ['conseguido','d','Conseguido']].map(([f, dot, label]) => (
+        {[['todos','n', T.all], ['necesito','p', T.needed], ['conseguido','d', T.found]].map(([f, dot, label]) => (
           <button key={f} className={`stat-pill${filter === f ? ' active' : ''}`} onClick={() => setFilter(f)}>
             <span className={`stat-dot ${dot}`} />
             {label}
@@ -93,14 +79,10 @@ export default function Necesito() {
 
       <div className="list-box">
         {visible.length === 0
-          ? <div className="empty">No hay items.</div>
+          ? <div className="empty">{T.empty}</div>
           : visible.map(item => (
-            <div key={item.id} className={`list-row s-${item.status}${expanded === item.id ? ' expanded' : ''}`}>
-              <div
-                className="row-main"
-                style={{ gridTemplateColumns: '1fr auto auto' }}
-                onClick={e => { if (!e.target.closest('button')) setExpanded(ex => ex === item.id ? null : item.id) }}
-              >
+            <div key={item.id} className={`list-row s-${item.status}`}>
+              <div className="row-main" style={{ gridTemplateColumns: '1fr auto auto' }}>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 500, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.descripcion}
@@ -108,12 +90,12 @@ export default function Necesito() {
                   <div style={{ fontSize: 11, color: 'var(--muted)' }}>
                     {item.referencia && <span className="mono">{item.referencia}</span>}
                     {item.referencia && item.prioridad !== 'normal' && ' · '}
-                    {item.prioridad !== 'normal' && <span style={{ textTransform: 'capitalize' }}>{item.prioridad}</span>}
+                    {item.prioridad !== 'normal' && <span>{T.prios[item.prioridad]}</span>}
                     {item.nota && ` · ${item.nota}`}
                   </div>
                 </div>
                 <button className={`status-btn ${item.status}`} onClick={() => toggleStatus(item.id)}>
-                  {item.status === 'necesito' ? 'Necesito' : 'Conseguido'}
+                  {item.status === 'necesito' ? T.need : T.found}
                 </button>
                 <button className="btn-ghost" style={{ fontSize: 11, padding: '3px 8px' }} onClick={() => del(item.id)}>✕</button>
               </div>

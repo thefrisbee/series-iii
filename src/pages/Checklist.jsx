@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useSyncedData } from '../sync/useSyncedData'
+import { useLanguage } from '../i18n/LanguageContext'
 
 const SEED = [
   'Limpiar y desgrasar el chasis',
@@ -25,6 +26,8 @@ const SEED = [
 ]
 
 export default function Checklist() {
+  const { t } = useLanguage()
+  const T = t.checklist
   const [items, setItems] = useSyncedData('checklist',
     SEED.map((text, i) => ({ id: i, text, checked: false }))
   )
@@ -55,28 +58,23 @@ export default function Checklist() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Checklist</h1>
-        <p className="page-sub">Tareas de la restauración</p>
+        <h1 className="page-title">{T.title}</h1>
+        <p className="page-sub">{T.sub}</p>
         <div className="progress-row">
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }} />
           </div>
-          <span className="progress-label">{done} / {total} hechas</span>
+          <span className="progress-label">{T.done(done, total)}</span>
         </div>
       </div>
 
       <form className="form-card" onSubmit={add} style={{ padding: '12px 16px' }}>
         <div className="form-row" style={{ marginBottom: 0 }}>
           <div className="field" style={{ flex: 1 }}>
-            <label>Nueva tarea</label>
-            <input
-              type="text"
-              placeholder="Ej: Cambiar juntas de culata"
-              value={newText}
-              onChange={e => setNewText(e.target.value)}
-            />
+            <label>{T.newTask}</label>
+            <input type="text" placeholder={T.placeholder} value={newText} onChange={e => setNewText(e.target.value)} />
           </div>
-          <button type="submit" className="btn-primary">Agregar</button>
+          <button type="submit" className="btn-primary">{T.add}</button>
         </div>
       </form>
 
@@ -89,19 +87,19 @@ export default function Checklist() {
       )}
 
       {completed.length > 0 && (
-        <>
+        <div style={{ marginTop: 8 }}><>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>
-            Completadas ({completed.length})
+            {T.completedSection(completed.length)}
           </div>
           <div className="list-box">
             {completed.map(item => (
               <CheckItem key={item.id} item={item} onToggle={toggle} onDel={del} />
             ))}
           </div>
-        </>
+        </></div>
       )}
 
-      {items.length === 0 && <div className="empty">No hay tareas.</div>}
+      {items.length === 0 && <div className="empty">{T.empty}</div>}
     </>
   )
 }

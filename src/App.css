@@ -332,6 +332,90 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ── REPUESTOS ── */
+.rep-header-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cost-hero {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cost-hero-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.cost-hero-amount {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+}
+
+.status-pills-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.rep-row-grid {
+  grid-template-columns: 100px 1fr 28px 80px 26px 80px !important;
+}
+
+.part-code  { font-size: 10.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.part-info  { min-width: 0; }
+.part-desc  { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.part-brand { font-size: 11px; color: var(--muted); }
+.part-qty   { font-size: 11px; color: var(--muted); text-align: right; }
+
+.copy-btn {
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s;
+  text-align: center;
+}
+.copy-btn:hover { color: var(--text); }
+
+.rep-expand {
+  padding: 0 14px 10px 14px !important;
+}
+
+.rep-expand-inner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 1px;
+  color: var(--muted);
+  transition: color 0.12s, border-color 0.12s;
+}
+.lang-toggle:hover { color: var(--text); border-color: var(--muted); }
+
 /* ── SYNC BADGE ── */
 .sync-badge {
   display: flex;
