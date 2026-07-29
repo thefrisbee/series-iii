@@ -82,6 +82,9 @@ export default function Repuestos() {
             </div>
           )}
         </div>
+        <div className="page-hero-img">
+          <img src={`${import.meta.env.BASE_URL}photos/img_2374.jpg`} alt="Land Rover Series III" />
+        </div>
         <div className="progress-row" style={{ marginTop: 14 }}>
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${pct}%` }} />
