@@ -6,9 +6,10 @@ import Gastos from './pages/Gastos'
 import Checklist from './pages/Checklist'
 import Necesito from './pages/Necesito'
 import Fotos from './pages/Fotos'
+import Diagnostico from './pages/Diagnostico'
 import './App.css'
 
-const NAV_KEYS = ['repuestos', 'gastos', 'checklist', 'necesito', 'fotos']
+const NAV_KEYS = ['repuestos', 'gastos', 'checklist', 'necesito', 'fotos', 'diagnostico']
 
 function SyncBadge() {
   const { status } = useSync()
@@ -71,7 +72,8 @@ export default function App() {
           <Route path="/gastos"    element={<Gastos />} />
           <Route path="/checklist" element={<Checklist />} />
           <Route path="/necesito"  element={<Necesito />} />
-          <Route path="/fotos"     element={<Fotos />} />
+          <Route path="/fotos"        element={<Fotos />} />
+          <Route path="/diagnostico"  element={<Diagnostico />} />
         </Routes>
       </main>
     </div>

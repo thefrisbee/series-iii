@@ -505,12 +505,169 @@
   50%       { opacity: 0.3; }
 }
 
+/* ── DIAGNÓSTICO ── */
+.diag-summary {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.diag-summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+.diag-summary-item:last-child { border-right: none; }
+
+.diag-summary-num {
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1;
+}
+.diag-summary-num.s-critico       { color: var(--stripe-ordered); }
+.diag-summary-num.s-evaluar       { color: var(--muted); }
+.diag-summary-num.s-aceptable     { color: var(--stripe-done); }
+.diag-summary-num.s-inventariadas { color: var(--text); }
+
+.diag-summary-label {
+  font-family: var(--display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
+.diag-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.diag-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--border);
+  padding: 14px 16px 16px;
+}
+.diag-card-critico       { border-top-color: var(--stripe-ordered); }
+.diag-card-por-evaluar   { border-top-color: var(--stripe-pending); }
+.diag-card-aceptable     { border-top-color: var(--stripe-done); }
+.diag-card-inventariadas { border-top-color: var(--text); }
+
+.diag-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.diag-card-title {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.diag-badge {
+  font-family: var(--display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.status-critico       { background: var(--badge-o-bg); color: var(--badge-o-fg); }
+.status-evaluar       { background: var(--badge-p-bg); color: var(--badge-p-fg); }
+.status-aceptable     { background: var(--badge-d-bg); color: var(--badge-d-fg); }
+.status-inventariadas { background: var(--surface-alt); color: var(--text); }
+
+.diag-card-summary {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.diag-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.diag-list-item {
+  font-size: 12px;
+  line-height: 1.4;
+  padding-left: 12px;
+  position: relative;
+  color: var(--text);
+}
+.diag-list-item::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+}
+
+.diag-footer {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: 8px;
+}
+
+/* ── MOBILE ── */
 @media (max-width: 540px) {
   .wordmark-title   { font-size: 18px; }
   .wordmark-sub     { display: none; }
-  .nav-link         { padding: 7px 8px; font-size: 10px; }
   .sync-label       { display: none; }
   .page-title       { font-size: 64px; }
   .cost-hero-amount { font-size: 26px; }
   .page-hero-img    { height: 160px; }
+
+  /* Nav: overflow horizontal en lugar de romperse */
+  .nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 4px;
+    flex-wrap: nowrap;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-link { padding: 7px 8px; font-size: 10px; white-space: nowrap; }
+
+  /* Rep row: stack en mobile */
+  .rep-row-grid {
+    grid-template-columns: 1fr auto auto !important;
+    grid-template-rows: auto auto;
+  }
+
+  /* Botones en form-row no se pisen */
+  .form-row { flex-direction: column; }
+  .btn-primary { align-self: stretch; text-align: center; }
+
+  /* Stats row scroll */
+  .stats-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+
+  /* Diag grid: 1 columna en mobile */
+  .diag-grid { grid-template-columns: 1fr; }
+  .diag-summary { flex-wrap: wrap; }
+  .diag-summary-item { flex: 1 1 45%; }
 }

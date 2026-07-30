@@ -2,7 +2,7 @@ const es = {
   lang: 'ES',
   wordmark: { sub: 'Restauración · pickup · cabina simple' },
   sync: { loading: 'cargando', saving: 'guardando', synced: 'sincronizado', dirty: 'por guardar', error: 'error', offline: 'local' },
-  nav: { repuestos: 'Repuestos', gastos: 'Gastos', checklist: 'Checklist', necesito: 'Necesito', fotos: 'Fotos' },
+  nav: { repuestos: 'Repuestos', gastos: 'Gastos', checklist: 'Checklist', necesito: 'Necesito', fotos: 'Fotos', diagnostico: 'Diagnóstico' },
 
   repuestos: {
     title: 'Repuestos',
@@ -50,6 +50,16 @@ const es = {
     need: 'Necesito', found: 'Conseguido',
     all: 'Todos', needed: 'Necesito',
     empty: 'No hay items.',
+  },
+
+  diagnostico: {
+    title: 'Diagnóstico',
+    sub: (date) => `Relevamiento visual · ${date}`,
+    critical: 'Críticos',
+    toInspect: 'Por evaluar',
+    acceptable: 'Aceptables',
+    inventoried: 'Inventariadas',
+    footer: 'Diagnóstico basado en inspección fotográfica. Algunos sistemas requieren evaluación presencial.',
   },
 
   fotos: {

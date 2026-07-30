@@ -2,7 +2,7 @@ const en = {
   lang: 'EN',
   wordmark: { sub: 'Restoration · single-cab pickup' },
   sync: { loading: 'loading', saving: 'saving', synced: 'synced', dirty: 'pending', error: 'error', offline: 'local' },
-  nav: { repuestos: 'Parts', gastos: 'Expenses', checklist: 'Checklist', necesito: 'Need', fotos: 'Photos' },
+  nav: { repuestos: 'Parts', gastos: 'Expenses', checklist: 'Checklist', necesito: 'Need', fotos: 'Photos', diagnostico: 'Diagnosis' },
 
   repuestos: {
     title: 'Parts',
@@ -50,6 +50,16 @@ const en = {
     need: 'Need', found: 'Found',
     all: 'All', needed: 'Needed',
     empty: 'No items.',
+  },
+
+  diagnostico: {
+    title: 'Diagnosis',
+    sub: (date) => `Visual assessment · ${date}`,
+    critical: 'Critical',
+    toInspect: 'To inspect',
+    acceptable: 'Acceptable',
+    inventoried: 'Inventoried',
+    footer: 'Diagnosis based on photographic inspection. Some systems require in-person evaluation.',
   },
 
   fotos: {

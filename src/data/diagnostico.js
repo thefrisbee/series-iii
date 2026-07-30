@@ -1,0 +1,163 @@
+export const DIAG_DATE = '2026-07-30'
+
+export const AREAS = [
+  {
+    id: 'motor',
+    status: 'critico',
+    es: { label: 'Motor', summary: 'En su lugar — sin arrancar. Necesita revisión completa.' },
+    en: { label: 'Engine', summary: 'In place — not running. Full service required.' },
+    items: {
+      es: [
+        'Motor 2.25L naftero original — no arranca (diagnóstico pendiente)',
+        'Óxido significativo en tapa de válvulas, múltiple de escape y bloque',
+        'Carburador presente — requiere revisión o reconstrucción',
+        'Sin batería instalada',
+        'Radiador en su lugar, sin refrigerante visible, tapa removida',
+        'Filtro de aire cilíndrico negro original en su lugar',
+        'Cableado original presente pero con aislación deteriorada',
+        'Correa de transmisión visible — estado desconocido',
+      ],
+      en: [
+        '2.25L petrol engine in place — not running (diagnosis pending)',
+        'Heavy rust on valve cover, exhaust manifold and block',
+        'Carburettor present — rebuild or replacement needed',
+        'No battery installed',
+        'Radiator in place, no coolant visible, cap removed',
+        'Original cylindrical black air filter housing in place',
+        'Original wiring present but with deteriorated insulation',
+        'Fan belt visible — condition unknown',
+      ],
+    },
+  },
+  {
+    id: 'carroceria',
+    status: 'critico',
+    es: { label: 'Carrocería', summary: 'Estructura íntegra. Pintura muy deteriorada, requiere restauración completa.' },
+    en: { label: 'Body', summary: 'Structure intact. Paint very deteriorated — full restoration needed.' },
+    items: {
+      es: [
+        'Pintura descascarada extensamente en toda la carrocería',
+        'Un panel de puerta reemplazado — pintado naranja/rojo (no original)',
+        'Estructura sin deformaciones visibles mayores',
+        'Ventanas traseras redondeadas presentes y aparentemente selladas',
+        'Óxido superficial en pilares A y umbrales',
+        'Malla protectora de faros delanteros en su lugar',
+        'Insignia Land Rover trasera presente',
+      ],
+      en: [
+        'Extensive paint peeling across all body panels',
+        'One door panel replaced — painted orange/red (non-original)',
+        'No major visible structural deformation',
+        'Rounded rear quarter windows present and apparently sealed',
+        'Surface rust on A-pillars and sills',
+        'Front headlight guard mesh in place',
+        'Rear Land Rover badge present',
+      ],
+    },
+  },
+  {
+    id: 'interior',
+    status: 'aceptable',
+    es: { label: 'Interior', summary: 'Asientos y tablero en estado razonable para la edad del vehículo.' },
+    en: { label: 'Interior', summary: 'Seats and dashboard in reasonable condition for the vehicle\'s age.' },
+    items: {
+      es: [
+        'Asientos tapizados grises — en estado aceptable (suciedad, sin roturas mayores)',
+        'Volante original en su lugar',
+        'Tablero con interruptores tipo toggle — presente, sin evaluar eléctricamente',
+        'Palanca de caja y palanca de transferencia presentes',
+        'Alfombras de goma parcialmente presentes',
+        'Espejo retrovisor removido y almacenado adentro',
+        'Piso sucio pero sin óxido perforante visible',
+      ],
+      en: [
+        'Grey fabric seats — acceptable condition (dirty, no major tears)',
+        'Original steering wheel in place',
+        'Dashboard with toggle switches — present, not electrically tested',
+        'Gear lever and transfer case lever in place',
+        'Rubber floor mats partially present',
+        'Rearview mirror removed and stored inside',
+        'Floor soiled but no visible perforation rust',
+      ],
+    },
+  },
+  {
+    id: 'electrico',
+    status: 'por-evaluar',
+    es: { label: 'Sistema eléctrico', summary: 'Sin batería. No evaluable hasta tener fuente de poder.' },
+    en: { label: 'Electrical', summary: 'No battery. Cannot be assessed until a power source is available.' },
+    items: {
+      es: [
+        'Sin batería instalada — sistemas eléctricos no evaluables',
+        'Cableado original visible en motor e interior — aislación deteriorada',
+        'Instrumentos del tablero presentes — funcionamiento desconocido',
+        'Alternador/generador: no claramente visible en las fotos',
+        'Luces traseras presentes — estado desconocido',
+      ],
+      en: [
+        'No battery installed — electrical systems cannot be evaluated',
+        'Original wiring visible in engine bay and interior — insulation deteriorated',
+        'Dashboard instruments present — functionality unknown',
+        'Alternator/generator: not clearly visible in photos',
+        'Rear lights present — condition unknown',
+      ],
+    },
+  },
+  {
+    id: 'tren',
+    status: 'por-evaluar',
+    es: { label: 'Tren de rodaje', summary: 'Ejes y suspensión no visibles en las fotos. Requiere inspección.' },
+    en: { label: 'Running Gear', summary: 'Axles and suspension not visible in photos. Inspection required.' },
+    items: {
+      es: [
+        'Ejes delantero y trasero: no visibles en las fotos disponibles',
+        'Suspensión: no evaluable desde las imágenes',
+        'Dirección: fuelles de goma removidos y almacenados (ver partes sueltas)',
+        'Frenos: no visibles — evaluación pendiente',
+        'Caja de cambios y transferencia: palancas presentes en cabina',
+      ],
+      en: [
+        'Front and rear axles: not visible in available photos',
+        'Suspension: cannot be assessed from images',
+        'Steering: rubber boots removed and stored (see loose parts)',
+        'Brakes: not visible — evaluation pending',
+        'Gearbox and transfer case: levers present in cab',
+      ],
+    },
+  },
+  {
+    id: 'partes',
+    status: 'inventariadas',
+    es: { label: 'Partes sueltas', summary: 'Varias piezas removidas almacenadas dentro del vehículo.' },
+    en: { label: 'Loose Parts', summary: 'Several removed components stored inside the vehicle.' },
+    items: {
+      es: [
+        'Fuelles de goma de dirección × 2 (rubber steering boots)',
+        'Elemento de filtro de aire redondo amarillo',
+        'Filtro de combustible con conexión de cobre',
+        'Shroud metálico del ventilador',
+        'Soporte interno de guardabarro',
+        'Vidrios de ventanilla / parabrisas × varios',
+        'Estribo original con logo LAND ROVER',
+        'Panel azul de tapizado interior',
+      ],
+      en: [
+        'Rubber steering boots × 2',
+        'Round yellow air filter element',
+        'Fuel filter with copper fitting',
+        'Metal fan shroud',
+        'Inner fender support bracket',
+        'Window / windscreen glass panels × several',
+        'Original LAND ROVER branded step',
+        'Blue interior trim panel',
+      ],
+    },
+  },
+]
+
+export const STATUS_META = {
+  critico:       { es: 'Crítico',       en: 'Critical',    cls: 'status-critico'   },
+  'por-evaluar': { es: 'Por evaluar',   en: 'To inspect',  cls: 'status-evaluar'   },
+  aceptable:     { es: 'Aceptable',     en: 'Acceptable',  cls: 'status-aceptable' },
+  inventariadas: { es: 'Inventariadas', en: 'Inventoried', cls: 'status-inventariadas' },
+}
