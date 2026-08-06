@@ -31,7 +31,8 @@ export default function Repuestos() {
 
   const state = REPUESTOS.map(p => {
     const s = saved.find(x => x.id === p.id) || { status: 'pendiente', nota: '', precio: p.precio || 0 }
-    return { ...p, status: s.status, nota: s.nota || '', precio: s.precio || p.precio || 0 }
+    // JC static price wins; only use stored value if no JC price available
+    return { ...p, status: s.status, nota: s.nota || '', precio: p.precio > 0 ? p.precio : (s.precio || 0) }
   })
 
   const totalCost = state.reduce((sum, p) => sum + (p.precio || 0) * p.cantidad, 0)
