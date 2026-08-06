@@ -5,7 +5,6 @@ import { REPUESTOS } from '../data/repuestos'
 
 const STATUSES = ['pendiente', 'ordenado', 'instalado']
 
-// Always copies in English for searching on parts websites
 function copyPart(p) {
   const lines = [p.descripcion]
   if (p.codigo !== '—') lines.push(p.codigo)
@@ -17,25 +16,25 @@ function copyPart(p) {
 
 const fmt = (n) =>
   n > 0
-    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n)
+    ? new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
     : '—'
 
-const INIT = REPUESTOS.map(p => ({ id: p.id, status: 'pendiente', nota: '', precio: 0 }))
+const INIT = REPUESTOS.map(p => ({ id: p.id, status: 'pendiente', nota: '', precio: p.precio || 0 }))
 
 export default function Repuestos() {
   const { t } = useLanguage()
   const T = t.repuestos
-  const [saved, setSaved]     = useSyncedData('repuestos', INIT)
-  const [filter, setFilter]   = useState('todos')
+  const [saved, setSaved]       = useSyncedData('repuestos', INIT)
+  const [filter, setFilter]     = useState('todos')
   const [expanded, setExpanded] = useState(null)
-  const [copied, setCopied]   = useState(null)
+  const [copied, setCopied]     = useState(null)
 
   const state = REPUESTOS.map(p => {
-    const s = saved.find(x => x.id === p.id) || { status: 'pendiente', nota: '', precio: 0 }
-    return { ...p, status: s.status, nota: s.nota || '', precio: s.precio || 0 }
+    const s = saved.find(x => x.id === p.id) || { status: 'pendiente', nota: '', precio: p.precio || 0 }
+    return { ...p, status: s.status, nota: s.nota || '', precio: s.precio || p.precio || 0 }
   })
 
-  const totalCost = state.reduce((sum, p) => sum + (p.precio || 0), 0)
+  const totalCost = state.reduce((sum, p) => sum + (p.precio || 0) * p.cantidad, 0)
 
   const counts = {
     todos:     state.length,
@@ -108,62 +107,82 @@ export default function Repuestos() {
       <div className="list-box">
         {visible.length === 0
           ? <div className="empty">{T.empty}</div>
-          : visible.map(p => (
-            <div key={p.id} className={`list-row s-${p.status}${expanded === p.id ? ' expanded' : ''}`}>
-              <div
-                className="row-main rep-row-grid"
-                onClick={e => { if (!e.target.closest('button') && !e.target.closest('input')) setExpanded(ex => ex === p.id ? null : p.id) }}
-              >
-                <span className="mono part-code">{p.codigo}</span>
-                <div className="part-info">
-                  <div className="part-desc">{p.descripcion}</div>
-                  {p.marca !== '—' && <div className="part-brand">{p.marca}</div>}
-                </div>
-                <span className="mono part-qty">×{p.cantidad}</span>
-                <span className="mono part-price" style={{ color: p.precio > 0 ? 'var(--text)' : 'var(--muted)', fontSize: 11 }}>
-                  {p.precio > 0 ? fmt(p.precio) : '—'}
-                </span>
-                <button title="Copy for search" onClick={e => handleCopy(e, p)} className="copy-btn">
-                  {copied === p.id ? '✓' : '⎘'}
-                </button>
-                <button className={`status-btn ${p.status}`} onClick={() => cycleStatus(p.id)}>
-                  {statusLabel[p.status]}
-                </button>
-              </div>
-              <div className="row-expand rep-expand">
-                <div className="rep-expand-inner">
-                  <div className="field" style={{ flex: 1 }}>
-                    <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
-                      {t.gastos.amount}
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      placeholder="0"
-                      value={p.precio || ''}
-                      onChange={e => update(p.id, { precio: parseFloat(e.target.value) || 0 })}
-                      onClick={e => e.stopPropagation()}
-                      style={{ padding: '6px 10px', width: '100%', fontVariantNumeric: 'tabular-nums' }}
-                    />
+          : visible.map(p => {
+            const lineTotal = (p.precio || 0) * p.cantidad
+            return (
+              <div key={p.id} className={`list-row s-${p.status}${expanded === p.id ? ' expanded' : ''}`}>
+                <div
+                  className="row-main rep-row-grid"
+                  onClick={e => { if (!e.target.closest('button') && !e.target.closest('input')) setExpanded(ex => ex === p.id ? null : p.id) }}
+                >
+                  <span className="mono part-code">{p.codigo}</span>
+                  <div className="part-info">
+                    <div className="part-desc">{p.descripcion}</div>
+                    {p.marca !== '—' && <div className="part-brand">{p.marca}</div>}
                   </div>
-                  <div className="field" style={{ flex: 3 }}>
-                    <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
-                      {t.repuestos.notePlaceholder}
-                    </label>
-                    <textarea
-                      className="note-input"
-                      rows={1}
-                      placeholder={T.notePlaceholder}
-                      value={p.nota}
-                      onChange={e => update(p.id, { nota: e.target.value })}
-                      onClick={e => e.stopPropagation()}
-                      style={{ minHeight: 36, resize: 'none' }}
-                    />
+                  <span className="mono part-qty">×{p.cantidad}</span>
+                  <span className="mono part-price" style={{ color: lineTotal > 0 ? 'var(--text)' : 'var(--muted)', fontSize: 11 }}>
+                    {lineTotal > 0 ? fmt(lineTotal) : '—'}
+                  </span>
+                  <button title="Copy for search" onClick={e => handleCopy(e, p)} className="copy-btn">
+                    {copied === p.id ? '✓' : '⎘'}
+                  </button>
+                  <button className={`status-btn ${p.status}`} onClick={() => cycleStatus(p.id)}>
+                    {statusLabel[p.status]}
+                  </button>
+                </div>
+                <div className="row-expand rep-expand">
+                  <div className="rep-expand-inner">
+                    <div className="field" style={{ flex: '0 0 120px' }}>
+                      <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
+                        Unit price (£)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={p.precio || ''}
+                        onChange={e => update(p.id, { precio: parseFloat(e.target.value) || 0 })}
+                        onClick={e => e.stopPropagation()}
+                        style={{ padding: '6px 10px', width: '100%', fontVariantNumeric: 'tabular-nums' }}
+                      />
+                    </div>
+                    <div className="field" style={{ flex: '0 0 80px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>
+                        Qty
+                      </div>
+                      <div style={{ padding: '6px 10px', background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 6, fontVariantNumeric: 'tabular-nums', color: 'var(--muted)', fontSize: 13 }}>
+                        ×{p.cantidad}
+                      </div>
+                    </div>
+                    <div className="field" style={{ flex: '0 0 100px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>
+                        Total
+                      </div>
+                      <div style={{ padding: '6px 10px', background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 6, fontVariantNumeric: 'tabular-nums', fontWeight: 600, fontSize: 13 }}>
+                        {lineTotal > 0 ? fmt(lineTotal) : '—'}
+                      </div>
+                    </div>
+                    <div className="field" style={{ flex: 1 }}>
+                      <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
+                        {t.repuestos.notePlaceholder}
+                      </label>
+                      <textarea
+                        className="note-input"
+                        rows={1}
+                        placeholder={T.notePlaceholder}
+                        value={p.nota}
+                        onChange={e => update(p.id, { nota: e.target.value })}
+                        onClick={e => e.stopPropagation()}
+                        style={{ minHeight: 36, resize: 'none' }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))
+            )
+          })
         }
       </div>
     </>
